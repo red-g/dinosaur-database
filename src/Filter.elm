@@ -97,8 +97,8 @@ inTimeRange time { start, end } =
 
 
 encompassesRange : Range -> Range -> Bool
-encompassesRange { start, end } data =
-    start >= data.start && end <= data.end
+encompassesRange query data =
+    query.start >= data.start && query.end <= data.end
 
 
 timesFilter : Bounded -> Filter Species
