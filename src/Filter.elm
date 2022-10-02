@@ -103,7 +103,7 @@ timesFilter times =
             \data -> inTimeRange data query
 
         Two { start, end } ->
-            \data -> inTimeRange data start || inTimeRange data end
+            \data -> (inTimeRange data start || inTimeRange data end) || start >= data.start && end <= data.end
     )
         << .times
 
