@@ -5027,115 +5027,6 @@ var $elm$json$Json$Decode$dict = function (decoder) {
 		$elm$core$Dict$fromList,
 		$elm$json$Json$Decode$keyValuePairs(decoder));
 };
-var $elm$core$String$cons = _String_cons;
-var $elm$core$String$fromChar = function (_char) {
-	return A2($elm$core$String$cons, _char, '');
-};
-var $elm$core$Char$toUpper = _Char_toUpper;
-var $author$project$Decode$capitalize = function (str) {
-	var _v0 = $elm$core$String$uncons(str);
-	if (!_v0.$) {
-		var _v1 = _v0.a;
-		var first = _v1.a;
-		var rest = _v1.b;
-		return _Utils_ap(
-			$elm$core$String$fromChar(
-				$elm$core$Char$toUpper(first)),
-			rest);
-	} else {
-		return str;
-	}
-};
-var $elm$core$Basics$composeR = F3(
-	function (f, g, x) {
-		return g(
-			f(x));
-	});
-var $elm$core$List$foldrHelper = F4(
-	function (fn, acc, ctr, ls) {
-		if (!ls.b) {
-			return acc;
-		} else {
-			var a = ls.a;
-			var r1 = ls.b;
-			if (!r1.b) {
-				return A2(fn, a, acc);
-			} else {
-				var b = r1.a;
-				var r2 = r1.b;
-				if (!r2.b) {
-					return A2(
-						fn,
-						a,
-						A2(fn, b, acc));
-				} else {
-					var c = r2.a;
-					var r3 = r2.b;
-					if (!r3.b) {
-						return A2(
-							fn,
-							a,
-							A2(
-								fn,
-								b,
-								A2(fn, c, acc)));
-					} else {
-						var d = r3.a;
-						var r4 = r3.b;
-						var res = (ctr > 500) ? A3(
-							$elm$core$List$foldl,
-							fn,
-							acc,
-							$elm$core$List$reverse(r4)) : A4($elm$core$List$foldrHelper, fn, acc, ctr + 1, r4);
-						return A2(
-							fn,
-							a,
-							A2(
-								fn,
-								b,
-								A2(
-									fn,
-									c,
-									A2(fn, d, res))));
-					}
-				}
-			}
-		}
-	});
-var $elm$core$List$foldr = F3(
-	function (fn, acc, ls) {
-		return A4($elm$core$List$foldrHelper, fn, acc, 0, ls);
-	});
-var $elm$core$List$map = F2(
-	function (f, xs) {
-		return A3(
-			$elm$core$List$foldr,
-			F2(
-				function (x, acc) {
-					return A2(
-						$elm$core$List$cons,
-						f(x),
-						acc);
-				}),
-			_List_Nil,
-			xs);
-	});
-var $elm$core$Tuple$mapFirst = F2(
-	function (func, _v0) {
-		var x = _v0.a;
-		var y = _v0.b;
-		return _Utils_Tuple2(
-			func(x),
-			y);
-	});
-var $author$project$Decode$capitalizeDict = A2(
-	$elm$core$Basics$composeR,
-	$elm$core$Dict$toList,
-	A2(
-		$elm$core$Basics$composeR,
-		$elm$core$List$map(
-			$elm$core$Tuple$mapFirst($author$project$Decode$capitalize)),
-		$elm$core$Dict$fromList));
 var $author$project$Decode$JsonSpecies = F4(
 	function (weight, length, times, locations) {
 		return {cE: length, aH: locations, dp: times, dx: weight};
@@ -5152,6 +5043,11 @@ var $author$project$Decode$Locations = F2(
 var $elm$json$Json$Decode$list = _Json_decodeList;
 var $elm$json$Json$Decode$map2 = _Json_map2;
 var $elm$json$Json$Decode$andThen = _Json_andThen;
+var $elm$core$Basics$composeR = F3(
+	function (f, g, x) {
+		return g(
+			f(x));
+	});
 var $elm$json$Json$Decode$index = _Json_decodeIndex;
 var $elm$json$Json$Decode$fail = _Json_fail;
 var $elm$json$Json$Decode$succeed = _Json_succeed;
@@ -5247,10 +5143,7 @@ var $author$project$Decode$species = A2(
 		A2($elm$json$Json$Decode$field, 'length', $elm$json$Json$Decode$float),
 		A2($elm$json$Json$Decode$field, 'time', $author$project$Decode$range),
 		A2($elm$json$Json$Decode$field, 'locations', $author$project$Decode$locations)));
-var $author$project$Decode$genus = A2(
-	$elm$json$Json$Decode$map,
-	$author$project$Decode$capitalizeDict,
-	$elm$json$Json$Decode$dict($author$project$Decode$species));
+var $author$project$Decode$genus = $elm$json$Json$Decode$dict($author$project$Decode$species);
 var $author$project$Decode$clades = $elm$json$Json$Decode$dict(
 	$elm$json$Json$Decode$dict($author$project$Decode$genus));
 var $elm$json$Json$Decode$decodeString = _Json_runOnString;
@@ -5424,6 +5317,75 @@ var $elm$core$Basics$never = function (_v0) {
 var $elm$core$Task$Perform = $elm$core$Basics$identity;
 var $elm$core$Task$succeed = _Scheduler_succeed;
 var $elm$core$Task$init = $elm$core$Task$succeed(0);
+var $elm$core$List$foldrHelper = F4(
+	function (fn, acc, ctr, ls) {
+		if (!ls.b) {
+			return acc;
+		} else {
+			var a = ls.a;
+			var r1 = ls.b;
+			if (!r1.b) {
+				return A2(fn, a, acc);
+			} else {
+				var b = r1.a;
+				var r2 = r1.b;
+				if (!r2.b) {
+					return A2(
+						fn,
+						a,
+						A2(fn, b, acc));
+				} else {
+					var c = r2.a;
+					var r3 = r2.b;
+					if (!r3.b) {
+						return A2(
+							fn,
+							a,
+							A2(
+								fn,
+								b,
+								A2(fn, c, acc)));
+					} else {
+						var d = r3.a;
+						var r4 = r3.b;
+						var res = (ctr > 500) ? A3(
+							$elm$core$List$foldl,
+							fn,
+							acc,
+							$elm$core$List$reverse(r4)) : A4($elm$core$List$foldrHelper, fn, acc, ctr + 1, r4);
+						return A2(
+							fn,
+							a,
+							A2(
+								fn,
+								b,
+								A2(
+									fn,
+									c,
+									A2(fn, d, res))));
+					}
+				}
+			}
+		}
+	});
+var $elm$core$List$foldr = F3(
+	function (fn, acc, ls) {
+		return A4($elm$core$List$foldrHelper, fn, acc, 0, ls);
+	});
+var $elm$core$List$map = F2(
+	function (f, xs) {
+		return A3(
+			$elm$core$List$foldr,
+			F2(
+				function (x, acc) {
+					return A2(
+						$elm$core$List$cons,
+						f(x),
+						acc);
+				}),
+			_List_Nil,
+			xs);
+	});
 var $elm$core$Task$andThen = _Scheduler_andThen;
 var $elm$core$Task$map = F2(
 	function (func, taskA) {
@@ -6433,6 +6395,14 @@ var $mdgriffith$elm_ui$Internal$Model$formatBoxShadow = function (shadow) {
 					$mdgriffith$elm_ui$Internal$Model$formatColor(shadow.U))
 				])));
 };
+var $elm$core$Tuple$mapFirst = F2(
+	function (func, _v0) {
+		var x = _v0.a;
+		var y = _v0.b;
+		return _Utils_Tuple2(
+			func(x),
+			y);
+	});
 var $elm$core$Tuple$mapSecond = F2(
 	function (func, _v0) {
 		var x = _v0.a;
