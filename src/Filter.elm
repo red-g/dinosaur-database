@@ -98,7 +98,7 @@ timesFilter times =
             \data -> data.start >= query && query >= data.end
 
         Two query ->
-            \data -> data.start >= query.start && query.end >= data.end
+            \data -> data.start >= query.start || query.end >= data.end
     )
         << .times
 

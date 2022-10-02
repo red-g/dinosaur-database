@@ -145,7 +145,7 @@ speciesDisplay { weight, times, length, regions } =
 
 regionsDisplay : Regions -> Element Msg
 regionsDisplay regions =
-    row [ Element.spacing 5 ] [ text "Regions", text <| Data.regionsToString regions ]
+    row [ Element.spacing 5 ] [ text "Regions:", text <| Data.regionsToString regions ]
 
 
 numberDisplay : { label : String, unit : String } -> Float -> Element Msg
