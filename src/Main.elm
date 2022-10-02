@@ -4,9 +4,9 @@ import Browser
 import Data exposing (Clade, Clades, Genus, Range, Regions, Species)
 import Decode exposing (data)
 import Dict exposing (Dict)
-import Element exposing (Element, column, layout, row, text)
+import Element exposing (Attribute, Element, column, layout, row, text)
 import Element.Font as Font
-import Element.Input exposing (button, labelAbove, placeholder, search)
+import Element.Input exposing (Placeholder, button, labelAbove, placeholder, search)
 import Element.Keyed as Keyed
 import Element.Lazy exposing (lazy)
 import Filter exposing (cladesFilter)
@@ -109,18 +109,18 @@ view { query, result } =
                 text <| "Failed to parse data: " ++ errorToString err
 
 
-red : Element.Color
-red =
+cladeColor : Element.Color
+cladeColor =
     Element.rgb 1 0 0
 
 
-green : Element.Color
-green =
+genusColor : Element.Color
+genusColor =
     Element.rgb 0 1 0
 
 
-blue : Element.Color
-blue =
+speciesColor : Element.Color
+speciesColor =
     Element.rgb 0 0 1
 
 
@@ -129,7 +129,7 @@ cladesView =
     dictView <|
         \name clade ->
             column []
-                [ Element.el [ Font.color red ] <| text name
+                [ Element.el [ Font.color cladeColor ] <| text name
                 , Element.el [ Element.padding 20 ] <| cladeView clade
                 ]
 
@@ -139,7 +139,7 @@ cladeView =
     dictView <|
         \name genus ->
             column []
-                [ Element.el [ Font.color green ] <| text name
+                [ Element.el [ Font.color genusColor ] <| text name
                 , Element.el [ Element.padding 20 ] <| genusView genus
                 ]
 
@@ -149,7 +149,7 @@ genusView =
     dictView <|
         \name species ->
             column []
-                [ Element.el [ Font.color blue ] <| text name
+                [ Element.el [ Font.color speciesColor ] <| text name
                 , Element.el [ Element.padding 20 ] <| speciesView species
                 ]
 
@@ -217,41 +217,46 @@ searchButton =
 
 cladeSearch : Input -> Element UpdateInput
 cladeSearch =
-    textSearch { onChange = WithClade, label = "Clade" }
+    textSearch { onChange = WithClade, label = "Clade" } [ Font.color cladeColor ]
 
 
 genusSearch : Input -> Element UpdateInput
 genusSearch =
-    textSearch { onChange = WithGenus, label = "Genus" }
+    textSearch { onChange = WithGenus, label = "Genus" } [ Font.color genusColor ]
 
 
 speciesSearch : Input -> Element UpdateInput
 speciesSearch =
-    textSearch { onChange = WithSpecies, label = "Species" }
+    textSearch { onChange = WithSpecies, label = "Species" } [ Font.color speciesColor ]
 
 
 areasSearch : Input -> Element UpdateInput
 areasSearch =
-    textSearch { onChange = WithAreas, label = "Areas" }
+    textSearch { onChange = WithAreas, label = "Areas" } []
 
 
 regionsSearch : Input -> Element UpdateInput
 regionsSearch =
-    textSearch { onChange = WithRegions, label = "Regions" }
+    textSearch { onChange = WithRegions, label = "Regions" } []
 
 
-textSearch : { onChange : String -> UpdateInput, label : String } -> Input -> Element UpdateInput
+textSearch : { onChange : String -> UpdateInput, label : String } -> List (Attribute UpdateInput) -> Input -> Element UpdateInput
 textSearch { onChange, label } =
-    textInput { onChange = onChange, placeholder = "Type your " ++ String.toLower label ++ "!", label = label }
+    textInput { onChange = onChange, placeholder = placeholderString label, label = label }
 
 
-textInput : { onChange : String -> UpdateInput, placeholder : String, label : String } -> Input -> Element UpdateInput
-textInput attributes value =
-    search []
-        { onChange = attributes.onChange
+placeholderString : String -> String
+placeholderString queryName =
+    "Type your " ++ String.toLower queryName ++ "!"
+
+
+textInput : { onChange : String -> UpdateInput, placeholder : String, label : String } -> List (Attribute UpdateInput) -> Input -> Element UpdateInput
+textInput config attributes value =
+    search attributes
+        { onChange = config.onChange
         , text = value
-        , placeholder = Just <| placeholder [] <| text attributes.placeholder
-        , label = labelAbove [] <| text attributes.label
+        , placeholder = Just <| placeholder [] <| text config.placeholder
+        , label = labelAbove [] <| text config.label
         }
 
 
@@ -279,11 +284,13 @@ rangeSearch { onChange, label } { start, end } =
             , placeholder = "Starting value"
             , label = "Start"
             }
+            []
             start
         , textInput
             { onChange = InputRange start >> onChange
             , placeholder = "Ending value"
             , label = "End"
             }
+            []
             end
         ]
