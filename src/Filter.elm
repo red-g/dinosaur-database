@@ -91,14 +91,19 @@ weightFilter query =
     .weight >> measurementFilter query
 
 
+inTimeRange : Range -> Float -> Bool
+inTimeRange { start, end } time =
+    time <= start && time >= end
+
+
 timesFilter : Bounded -> Filter Species
 timesFilter times =
     (case times of
         Single query ->
-            \data -> data.start >= query && query >= data.end
+            \data -> inTimeRange data query
 
-        Two query ->
-            \data -> data.start >= query.start || query.end >= data.end
+        Two { start, end } ->
+            \data -> inTimeRange data start || inTimeRange data end
     )
         << .times
 
