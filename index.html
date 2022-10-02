@@ -5660,6 +5660,12 @@ var $author$project$Filter$regionsFilter = function (regions) {
 					regions);
 			}));
 };
+var $author$project$Filter$inTimeRange = F2(
+	function (_v0, time) {
+		var start = _v0.c4;
+		var end = _v0.ck;
+		return (_Utils_cmp(time, start) < 1) && (_Utils_cmp(time, end) > -1);
+	});
 var $author$project$Filter$timesFilter = function (times) {
 	return A2(
 		$elm$core$Basics$composeL,
@@ -5667,12 +5673,13 @@ var $author$project$Filter$timesFilter = function (times) {
 			if (!times.$) {
 				var query = times.a;
 				return function (data) {
-					return (_Utils_cmp(data.c4, query) > -1) && (_Utils_cmp(query, data.ck) > -1);
+					return A2($author$project$Filter$inTimeRange, data, query);
 				};
 			} else {
-				var query = times.a;
+				var start = times.a.c4;
+				var end = times.a.ck;
 				return function (data) {
-					return (_Utils_cmp(data.c4, query.c4) > -1) || (_Utils_cmp(query.ck, data.ck) > -1);
+					return A2($author$project$Filter$inTimeRange, data, start) || A2($author$project$Filter$inTimeRange, data, end);
 				};
 			}
 		}(),
