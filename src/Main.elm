@@ -5,6 +5,7 @@ import Data exposing (Clade, Clades, Genus, Range, Regions, Species)
 import Decode exposing (data)
 import Dict exposing (Dict)
 import Element exposing (Element, column, layout, row, text)
+import Element.Font as Font
 import Element.Input exposing (button, labelAbove, placeholder, search)
 import Element.Keyed as Keyed
 import Element.Lazy exposing (lazy)
@@ -101,61 +102,91 @@ view { query, result } =
                 column []
                     [ lazy querySearches query
                     , searchButton
-                    , lazy cladesDisplay clades
+                    , lazy cladesView clades
                     ]
 
             Err err ->
                 text <| "Failed to parse data: " ++ errorToString err
 
 
-cladesDisplay : Clades -> Element Msg
-cladesDisplay =
-    dictDisplay cladeDisplay
+red : Element.Color
+red =
+    Element.rgb 1 0 0
 
 
-cladeDisplay : Clade -> Element Msg
-cladeDisplay =
-    dictDisplay genusDisplay
+green : Element.Color
+green =
+    Element.rgb 0 1 0
 
 
-genusDisplay : Genus -> Element Msg
-genusDisplay =
-    dictDisplay speciesDisplay
+blue : Element.Color
+blue =
+    Element.rgb 0 0 1
 
 
-dictDisplay : (a -> Element Msg) -> Dict String a -> Element Msg
-dictDisplay f =
-    Dict.map (\id value -> namedEl id <| f value) >> Dict.toList >> Keyed.column []
+cladesView : Clades -> Element Msg
+cladesView =
+    dictView <|
+        \name clade ->
+            column []
+                [ Element.el [ Font.color red ] <| text name
+                , Element.el [ Element.padding 20 ] <| cladeView clade
+                ]
 
 
-namedEl : String -> Element Msg -> Element Msg
-namedEl name el =
-    column [] [ text name, Element.el [ Element.padding 20 ] el ]
+cladeView : Clade -> Element Msg
+cladeView =
+    dictView <|
+        \name genus ->
+            column []
+                [ Element.el [ Font.color green ] <| text name
+                , Element.el [ Element.padding 20 ] <| genusView genus
+                ]
 
 
-speciesDisplay : Species -> Element Msg
-speciesDisplay { weight, times, length, regions } =
+genusView : Genus -> Element Msg
+genusView =
+    dictView <|
+        \name species ->
+            column []
+                [ Element.el [ Font.color blue ] <| text name
+                , Element.el [ Element.padding 20 ] <| speciesView species
+                ]
+
+
+dictView : (String -> a -> Element Msg) -> Dict String a -> Element Msg
+dictView f =
+    Dict.map f >> Dict.toList >> Keyed.column []
+
+
+speciesView : Species -> Element Msg
+speciesView { weight, times, length, regions } =
     column []
-        [ numberDisplay { label = "Weight", unit = "kg" } weight
-        , numberDisplay { label = "Length", unit = "m" } length
-        , rangeDisplay { label = "Times", unit = "mya" } times
-        , regionsDisplay regions
+        [ numberView { label = "Weight", unit = "kg" } weight
+        , numberView { label = "Length", unit = "m" } length
+        , rangeView { label = "Times", unit = "mya" } times
+        , regionsView regions
         ]
 
 
-regionsDisplay : Regions -> Element Msg
-regionsDisplay regions =
-    row [ Element.spacing 5 ] [ text "Regions:", text <| Data.regionsToString regions ]
+labelView : String -> Element msg
+labelView str =
+    text <| str ++ ":"
 
 
-numberDisplay : { label : String, unit : String } -> Float -> Element Msg
-numberDisplay { label, unit } value =
-    row [ Element.spacing 5 ] [ text label, text <| String.fromFloat value, text unit ]
+regionsView : Regions -> Element Msg
+regionsView regions =
+    row [ Element.spacing 5 ] [ labelView "Regions", text <| Data.regionsToString regions ]
 
 
-rangeDisplay : { label : String, unit : String } -> Range -> Element Msg
-rangeDisplay { label, unit } { start, end } =
-    row [ Element.spacing 5 ] [ text label, text <| String.fromFloat start, text "to", text <| String.fromFloat end, text unit ]
+numberView : { label : String, unit : String } -> Float -> Element Msg
+numberView { label, unit } value =
+    row [ Element.spacing 5 ] [ labelView label, text <| String.fromFloat value, text unit ]
+
+
+rangeView : { label : String, unit : String } -> Range -> Element Msg
+rangeView { label, unit } { start, end } =
+    row [ Element.spacing 5 ] [ labelView label, text <| String.fromFloat start, text "to", text <| String.fromFloat end, text unit ]
 
 
 querySearches : Inputs -> Element Msg
