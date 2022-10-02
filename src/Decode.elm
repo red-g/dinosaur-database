@@ -1,7 +1,6 @@
 module Decode exposing (..)
 
 import Data exposing (Clades, Genus, Range, Region, Regions, Species, stringToRegion)
-import Dict exposing (Dict)
 import Json.Decode exposing (..)
 
 
@@ -60,24 +59,9 @@ species =
         |> map fromJson
 
 
-capitalize : String -> String
-capitalize str =
-    case String.uncons str of
-        Just ( first, rest ) ->
-            String.fromChar (Char.toUpper first) ++ rest
-
-        Nothing ->
-            str
-
-
-capitalizeDict : Dict String a -> Dict String a
-capitalizeDict =
-    Dict.toList >> (List.map <| Tuple.mapFirst capitalize) >> Dict.fromList
-
-
 genus : Decoder Genus
 genus =
-    dict species |> map capitalizeDict
+    dict species
 
 
 clades : Decoder Clades
